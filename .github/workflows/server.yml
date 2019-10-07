@@ -1,0 +1,28 @@
+name: imlonghao/serverinfo:server
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/server.yml
+      - server/
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Build the Docker image
+        uses: actions/docker/cli@master
+        with:
+          args: build -t $GITHUB_WORKFLOW server/
+      - name: Login in Dockerhub
+        uses: actions/docker/login@master
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push the Docker image
+        uses: actions/docker/cli@master
+        with:
+          args: push $GITHUB_WORKFLOW
