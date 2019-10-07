@@ -6,6 +6,7 @@ import (
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
+	"io/ioutil"
 )
 
 type nodeMessage struct {
@@ -26,8 +27,10 @@ type nodeMessage struct {
 
 func messageGenerator() nodeMessage {
 	var message nodeMessage
+	if hostname, err := ioutil.ReadFile("/etc/hostname"); err == nil {
+		message.Hostname = string(hostname)
+	}
 	if stat, err := host.Info(); err == nil {
-		message.Hostname = stat.Hostname
 		message.Platform = stat.Platform
 		message.Kernel = stat.KernelVersion
 		message.Uptime = stat.Uptime
