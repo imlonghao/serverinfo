@@ -7,6 +7,7 @@ import (
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
 	"io/ioutil"
+	"strings"
 )
 
 type nodeMessage struct {
@@ -28,7 +29,7 @@ type nodeMessage struct {
 func messageGenerator() nodeMessage {
 	var message nodeMessage
 	if hostname, err := ioutil.ReadFile("/etc/hostname"); err == nil {
-		message.Hostname = string(hostname)
+		message.Hostname = strings.TrimSuffix(string(hostname),"\n")
 	}
 	if stat, err := host.Info(); err == nil {
 		message.Platform = stat.Platform
