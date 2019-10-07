@@ -6,7 +6,7 @@ RUN apk add upx && \
     GO111MODULE=on go build -ldflags="-s -w" -o /app && \
     upx --lzma --best /app
 
-FROM scratch
+FROM alpine
 COPY --from=builder /app /
 COPY index.html /
 CMD ["/app"]
