@@ -2,9 +2,90 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>服务器监控页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-
+<table class="table">
+    <thead>
+        <tr>
+            <th>主机名</th>
+            <th>运行系统</th>
+            <th>内核版本</th>
+            <th>运行时间</th>
+            <th>负载</th>
+            <th>内存 MB</th>
+            <th>SWAP MB</th>
+            <th>硬盘 GB</th>
+            <th>更新时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.slim.js"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.min.js"></script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    Date.prototype.format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+        for (var k in o) {
+            if (new RegExp("(" + k + ")").test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ?
+                    (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            }
+        }
+        return fmt;
+    };
+    const socket = new WebSocket('wss://status.esd.cc/cws');
+    socket.addEventListener('message', function (event) {
+        skip_create = false;
+        data = JSON.parse(event.data);
+        let td;
+        document.querySelectorAll("tbody>tr").forEach(function (tr) {
+            tdd = tr.querySelectorAll("td");
+            if (tdd[0].innerText === data.hostname) {
+                td = tdd;
+                skip_create = true;
+            }
+        });
+        if (!skip_create) {
+            tr = document.querySelectorAll('tbody')[0].insertRow();
+            for (let i=0; i < 9; i++) {
+                tr.insertCell();
+            }
+            td = tr.querySelectorAll("td");
+        }
+        td[0].innerText = data.hostname;
+        td[1].innerText = data.platform;
+        td[2].innerText = data.kernel;
+        if (data.uptime > 86400) {
+            td[3].innerText = (data.uptime / 86400).toFixed(2) + ' 天';
+        } else if (data.uptime > 3600) {
+            td[3].innerText = (data.uptime / 3600).toFixed(2) + ' 时';
+        } else if (data.uptime > 60) {
+            td[3].innerText = (data.uptime / 60).toFixed(2) + ' 分';
+        } else {
+            td[3].innerText = data.uptime.toFixed(2) + ' 秒';
+        }
+        td[4].innerText = data.load1 + ' / ' + data.load5 + ' / ' + data.load15;
+        td[5].innerText = `${(data.memory_used / 1024 / 1024).toFixed(0)} / ${(data.memory_total / 1024 / 1024).toFixed(0)} (${(data.memory_used / data.memory_total * 100).toFixed(2)}%)`;
+        td[6].innerText = `${(data.swap_used / 1024 / 1024).toFixed(0)} / ${(data.swap_total / 1024 / 1024).toFixed(0)} (${(data.swap_used / data.swap_total * 100).toFixed(2)}%)`;
+        td[7].innerText = `${(data.disk_used / 1024 / 1024 / 1024).toFixed(3)} / ${(data.disk_total / 1024 / 1024 / 1024).toFixed(3)} (${(data.disk_used / data.disk_total * 100).toFixed(2)}%)`;
+        td[8].innerText = (new Date()).format("yyyy-MM-dd hh:mm:ss");
+    });
+</script>
 </body>
 </html>
