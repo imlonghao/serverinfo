@@ -63,18 +63,21 @@ func main() {
 	}
 	defer conn.Close()
 	for {
-		_, message, err := conn.ReadMessage()
+		mt, message, err := conn.ReadMessage()
 		if err != nil {
 			panic(err)
 		}
-		switch string(message) {
-		case "check":
-			if err := conn.WriteJSON(messageGenerator()); err != nil {
+		switch mt {
+		case websocket.PingMessage:
+			if err := conn.WriteMessage(websocket.PongMessage, []byte("")); err != nil {
 				panic(err)
 			}
-		case "ping":
-			if err := conn.WriteMessage(websocket.PingMessage, []byte("pong")); err != nil {
-				panic(err)
+		case websocket.TextMessage:
+			switch string(message) {
+			case "check":
+				if err := conn.WriteJSON(messageGenerator()); err != nil {
+					panic(err)
+				}
 			}
 		}
 	}

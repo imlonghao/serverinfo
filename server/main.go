@@ -47,14 +47,14 @@ func nodeWebsocket(c *gin.Context) {
 	for {
 		time.Sleep(nwsPeriod)
 		if len(clients) == 0 {
-			if err := ws.WriteMessage(websocket.PingMessage, []byte("ping")); err != nil {
+			if err := ws.WriteMessage(websocket.PingMessage, []byte("")); err != nil {
 				return
 			}
-			_, message, err := ws.ReadMessage()
+			mt, _, err := ws.ReadMessage()
 			if err != nil {
 				return
 			}
-			if string(message) != "pong" {
+			if mt != websocket.PongMessage {
 				return
 			}
 			continue
