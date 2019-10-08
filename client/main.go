@@ -3,7 +3,6 @@ package main
 import (
 	"io/ioutil"
 	"strings"
-	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/shirou/gopsutil/disk"
@@ -71,7 +70,6 @@ func main() {
 		panic(err)
 	}
 	defer conn.Close()
-	conn.SetPingHandler(func(string) error { conn.SetReadDeadline(time.Now().Add(10 * time.Second)); return nil })
 	for {
 		mt, message, err := conn.ReadMessage()
 		if err != nil {
@@ -84,6 +82,8 @@ func main() {
 				if err := conn.WriteJSON(messageGenerator()); err != nil {
 					panic(err)
 				}
+			case "ping":
+				continue
 			}
 		}
 	}
