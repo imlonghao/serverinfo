@@ -12,7 +12,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const version = "20191008-1"
+const version = "20191008-2"
 
 type nodeMessage struct {
 	Hostname    string  `json:"hostname"`
@@ -38,6 +38,9 @@ func messageGenerator() nodeMessage {
 		message.Hostname = strings.TrimSuffix(string(hostname), "\n")
 	}
 	if stat, err := host.Info(); err == nil {
+		if message.Hostname == "" {
+			message.Hostname = stat.Hostname
+		}
 		message.Platform = stat.Platform
 		message.Kernel = stat.KernelVersion
 		message.Uptime = stat.Uptime
