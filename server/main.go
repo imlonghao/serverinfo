@@ -32,6 +32,7 @@ type nodeMessage struct {
 	SwapUsed    uint64  `json:"swap_used"`
 	DiskTotal   uint64  `json:"disk_total"`
 	DiskUsed    uint64  `json:"disk_used"`
+	Version     string  `json:"version"`
 }
 
 func index(c *gin.Context) {

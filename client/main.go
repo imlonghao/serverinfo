@@ -12,6 +12,8 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
+const version = "20191008-1"
+
 type nodeMessage struct {
 	Hostname    string  `json:"hostname"`
 	Platform    string  `json:"platform"`
@@ -26,10 +28,12 @@ type nodeMessage struct {
 	SwapUsed    uint64  `json:"swap_used"`
 	DiskTotal   uint64  `json:"disk_total"`
 	DiskUsed    uint64  `json:"disk_used"`
+	Version     string  `json:"version"`
 }
 
 func messageGenerator() nodeMessage {
 	var message nodeMessage
+	message.Version = version
 	if hostname, err := ioutil.ReadFile("/etc/hostname"); err == nil {
 		message.Hostname = strings.TrimSuffix(string(hostname), "\n")
 	}

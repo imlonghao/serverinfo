@@ -18,6 +18,7 @@
             <th>内存 MB</th>
             <th>SWAP MB</th>
             <th>硬盘 GB</th>
+            <th>版本</th>
             <th>更新时间</th>
         </tr>
         </thead>
@@ -64,7 +65,7 @@
         });
         if (!skip_create) {
             tr = document.querySelectorAll('tbody')[0].insertRow();
-            for (let i=0; i < 9; i++) {
+            for (let i=0; i < 10; i++) {
                 tr.insertCell();
             }
             td = tr.querySelectorAll("td");
@@ -85,7 +86,8 @@
         td[5].innerText = `${(data.memory_used / 1024 / 1024).toFixed(0)} / ${(data.memory_total / 1024 / 1024).toFixed(0)} (${(data.memory_used / data.memory_total * 100).toFixed(2)}%)`;
         td[6].innerText = `${(data.swap_used / 1024 / 1024).toFixed(0)} / ${(data.swap_total / 1024 / 1024).toFixed(0)} (${(data.swap_used / data.swap_total * 100).toFixed(2)}%)`;
         td[7].innerText = `${(data.disk_used / 1024 / 1024 / 1024).toFixed(3)} / ${(data.disk_total / 1024 / 1024 / 1024).toFixed(3)} (${(data.disk_used / data.disk_total * 100).toFixed(2)}%)`;
-        td[8].innerText = (new Date()).format("yyyy-MM-dd hh:mm:ss");
+        td[8].innerText = data.version;
+        td[9].innerText = (new Date()).format("yyyy-MM-dd hh:mm:ss");
     });
 </script>
 </body>
