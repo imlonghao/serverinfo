@@ -13,16 +13,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      - name: Build the Docker image
-        uses: actions/docker/cli@master
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          args: build -t $GITHUB_WORKFLOW client/
-      - name: Login in Dockerhub
-        uses: actions/docker/login@master
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Push the Docker image
-        uses: actions/docker/cli@master
-        with:
-          args: push $GITHUB_WORKFLOW
+          name: imlonghao/serverinfo:client
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          workdir: client
