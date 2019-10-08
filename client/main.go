@@ -11,7 +11,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const version = "20191008-2"
+const version = "20191008-3"
 
 type nodeMessage struct {
 	Hostname    string  `json:"hostname"`
