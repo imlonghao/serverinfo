@@ -67,8 +67,13 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		if string(message) == "check" {
+		switch string(message) {
+		case "check":
 			if err := conn.WriteJSON(messageGenerator()); err != nil {
+				panic(err)
+			}
+		case "ping":
+			if err := ws.WriteMessage(websocket.PingMessage, []byte("pong")); err != nil {
 				panic(err)
 			}
 		}
