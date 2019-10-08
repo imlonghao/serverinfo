@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"io/ioutil"
+	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/shirou/gopsutil/disk"
@@ -11,7 +15,12 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const version = "20191008-3"
+const version = "20191008-4"
+
+var (
+	speedIn  float64
+	speedOut float64
+)
 
 type nodeMessage struct {
 	Hostname    string  `json:"hostname"`
@@ -27,11 +36,15 @@ type nodeMessage struct {
 	SwapUsed    uint64  `json:"swap_used"`
 	DiskTotal   uint64  `json:"disk_total"`
 	DiskUsed    uint64  `json:"disk_used"`
+	SpeedIn     float64 `json:"speed_in"`
+	SpeedOut    float64 `json:"speed_out"`
 	Version     string  `json:"version"`
 }
 
 func messageGenerator() nodeMessage {
 	var message nodeMessage
+	message.SpeedIn = speedIn
+	message.SpeedOut = speedOut
 	message.Version = version
 	if hostname, err := ioutil.ReadFile("/etc/hostname"); err == nil {
 		message.Hostname = strings.TrimSuffix(string(hostname), "\n")
@@ -64,7 +77,52 @@ func messageGenerator() nodeMessage {
 	return message
 }
 
+func networkSpeed() (bytesIn uint64, bytesOut uint64) {
+	netStatsFile, err := os.Open("/proc/net/dev")
+	if err != nil {
+		panic(err)
+	}
+	defer netStatsFile.Close()
+	reader := bufio.NewReader(netStatsFile)
+	reader.ReadString('\n')
+	reader.ReadString('\n')
+	var line string
+	for err == nil {
+		line, err = reader.ReadString('\n')
+		if line == "" {
+			continue
+		}
+		splitLine := strings.Split(line, ":")
+		interfaceName := splitLine[0]
+		if strings.HasPrefix(interfaceName, "eth") || strings.HasPrefix(interfaceName, "enp") {
+			fields := strings.Fields(splitLine[1])
+			bi, err := strconv.ParseUint(fields[0], 10, 64)
+			if err != nil {
+				bi = 0
+			}
+			bo, err := strconv.ParseUint(fields[8], 10, 64)
+			if err != nil {
+				bo = 0
+			}
+			bytesIn += bi
+			bytesOut += bo
+		}
+	}
+	return
+}
+
 func main() {
+	go func() {
+		bytesInOld, bytesOutOld := networkSpeed()
+		for {
+			time.Sleep(5 * time.Second)
+			bytesIn, bytesOut := networkSpeed()
+			speedIn = float64(bytesIn - bytesInOld) / 125000 / 5
+			speedOut = float64(bytesOut - bytesOutOld) / 125000 / 5
+			bytesInOld = bytesIn
+			bytesOutOld = bytesOut
+		}
+	}()
 	conn, _, err := websocket.DefaultDialer.Dial("wss://status.esd.cc/nws", nil)
 	if err != nil {
 		panic(err)
