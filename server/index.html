@@ -24,9 +24,10 @@
         <tbody>
         </tbody>
     </table>
-<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.slim.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.slim.min.js"></script>
 <script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.min.js"></script>
 <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
 <script>
     Date.prototype.format = function (fmt) {
         var o = {
@@ -49,7 +50,7 @@
         }
         return fmt;
     };
-    const socket = new WebSocket('wss://status.esd.cc/cws');
+    const socket = new ReconnectingWebSocket('wss://status.esd.cc/cws');
     socket.addEventListener('message', function (event) {
         skip_create = false;
         data = JSON.parse(event.data);
