@@ -15,7 +15,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const version = "20191008-6"
+const version = "20191008-7"
 
 var (
 	bytesIn  uint64
@@ -92,18 +92,17 @@ func networkSpeed() (bytesIn uint64, bytesOut uint64) {
 		if line == "" {
 			continue
 		}
-		splitLine := strings.Split(line, ":")
-		interfaceName := splitLine[0]
+		fields := strings.Fields(line)
+		interfaceName := strings.TrimSuffix(fields[0], ":")
 		if strings.Contains(interfaceName, ".") {
 			continue
 		}
 		if strings.HasPrefix(interfaceName, "eth") || strings.HasPrefix(interfaceName, "enp") {
-			fields := strings.Fields(splitLine[1])
-			bi, err := strconv.ParseUint(fields[0], 10, 64)
+			bi, err := strconv.ParseUint(fields[1], 10, 64)
 			if err != nil {
 				bi = 0
 			}
-			bo, err := strconv.ParseUint(fields[8], 10, 64)
+			bo, err := strconv.ParseUint(fields[9], 10, 64)
 			if err != nil {
 				bo = 0
 			}
