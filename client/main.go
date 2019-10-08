@@ -15,11 +15,11 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const version = "20191008-5"
+const version = "20191008-6"
 
 var (
-	speedIn  float64
-	speedOut float64
+	bytesIn  uint64
+	bytesOut uint64
 )
 
 type nodeMessage struct {
@@ -36,15 +36,15 @@ type nodeMessage struct {
 	SwapUsed    uint64  `json:"swap_used"`
 	DiskTotal   uint64  `json:"disk_total"`
 	DiskUsed    uint64  `json:"disk_used"`
-	SpeedIn     float64 `json:"speed_in"`
-	SpeedOut    float64 `json:"speed_out"`
+	BytesIn     uint64  `json:"bytes_in"`
+	BytesOut    uint64  `json:"bytes_out"`
 	Version     string  `json:"version"`
 }
 
 func messageGenerator() nodeMessage {
 	var message nodeMessage
-	message.SpeedIn = speedIn
-	message.SpeedOut = speedOut
+	message.BytesIn = bytesIn
+	message.BytesOut = bytesOut
 	message.Version = version
 	if hostname, err := ioutil.ReadFile("/etc/hostname"); err == nil {
 		message.Hostname = strings.TrimSuffix(string(hostname), "\n")
@@ -119,11 +119,11 @@ func main() {
 		bytesInOld, bytesOutOld := networkSpeed()
 		for {
 			time.Sleep(3 * time.Second)
-			bytesIn, bytesOut := networkSpeed()
-			speedIn = float64(bytesIn - bytesInOld) / 125000 / 3
-			speedOut = float64(bytesOut - bytesOutOld) / 125000 / 3
-			bytesInOld = bytesIn
-			bytesOutOld = bytesOut
+			bytesInNew, bytesOutNew := networkSpeed()
+			bytesIn = bytesInNew - bytesInOld
+			bytesOut = bytesOutNew - bytesOutOld
+			bytesInOld = bytesInNew
+			bytesOutOld = bytesOutNew
 		}
 	}()
 	conn, _, err := websocket.DefaultDialer.Dial("wss://status.esd.cc/nws", nil)

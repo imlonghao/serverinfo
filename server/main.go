@@ -32,8 +32,8 @@ type nodeMessage struct {
 	SwapUsed    uint64  `json:"swap_used"`
 	DiskTotal   uint64  `json:"disk_total"`
 	DiskUsed    uint64  `json:"disk_used"`
-	SpeedIn     float64 `json:"speed_in"`
-	SpeedOut    float64 `json:"speed_out"`
+	BytesIn     uint64  `json:"bytes_in"`
+	BytesOut    uint64  `json:"bytes_out"`
 	Version     string  `json:"version"`
 }
 

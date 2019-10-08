@@ -18,7 +18,7 @@
             <th>内存</th>
             <th>SWAP</th>
             <th>硬盘</th>
-            <th colspan="2">网速 Mbps ↓|↑</th>
+            <th colspan="2">网速 /s ↓|↑</th>
             <th>版本</th>
             <th>更新时间</th>
         </tr>
@@ -95,8 +95,8 @@
         td[5].innerText = `${readablizeBytes(data.memory_used)} / ${readablizeBytes(data.memory_total)} (${(data.memory_used / data.memory_total * 100).toFixed(2)}%)`;
         td[6].innerText = `${readablizeBytes(data.swap_used)} / ${readablizeBytes(data.swap_total)} (${(data.swap_used / data.swap_total * 100).toFixed(2)}%)`;
         td[7].innerText = `${readablizeBytes(data.disk_used)} / ${readablizeBytes(data.disk_total)} (${(data.disk_used / data.disk_total * 100).toFixed(2)}%)`;
-        td[8].innerText = data.speed_in.toFixed(2);
-        td[9].innerText = data.speed_out.toFixed(2);
+        td[8].innerText = readablizeBytes(data.bytes_in / 3);
+        td[9].innerText = readablizeBytes(data.bytes_out / 3);
         td[10].innerText = data.version;
         td[11].innerText = (new Date()).format("hh:mm:ss");
     });
