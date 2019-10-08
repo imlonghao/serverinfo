@@ -15,7 +15,7 @@ var (
 		},
 	}
 	clients   []*websocket.Conn
-	nwsPeriod = 10 * time.Second
+	nwsPeriod = 3 * time.Second
 )
 
 type nodeMessage struct {

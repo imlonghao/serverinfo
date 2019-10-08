@@ -115,10 +115,10 @@ func main() {
 	go func() {
 		bytesInOld, bytesOutOld := networkSpeed()
 		for {
-			time.Sleep(5 * time.Second)
+			time.Sleep(3 * time.Second)
 			bytesIn, bytesOut := networkSpeed()
-			speedIn = float64(bytesIn - bytesInOld) / 125000 / 5
-			speedOut = float64(bytesOut - bytesOutOld) / 125000 / 5
+			speedIn = float64(bytesIn - bytesInOld) / 125000 / 3
+			speedOut = float64(bytesOut - bytesOutOld) / 125000 / 3
 			bytesInOld = bytesIn
 			bytesOutOld = bytesOut
 		}
