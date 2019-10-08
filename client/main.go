@@ -1,13 +1,15 @@
 package main
 
 import (
+	"io/ioutil"
+	"strings"
+	"time"
+
 	"github.com/gorilla/websocket"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
-	"io/ioutil"
-	"strings"
 )
 
 type nodeMessage struct {
@@ -29,7 +31,7 @@ type nodeMessage struct {
 func messageGenerator() nodeMessage {
 	var message nodeMessage
 	if hostname, err := ioutil.ReadFile("/etc/hostname"); err == nil {
-		message.Hostname = strings.TrimSuffix(string(hostname),"\n")
+		message.Hostname = strings.TrimSuffix(string(hostname), "\n")
 	}
 	if stat, err := host.Info(); err == nil {
 		message.Platform = stat.Platform
@@ -62,16 +64,13 @@ func main() {
 		panic(err)
 	}
 	defer conn.Close()
+	conn.SetPingHandler(func(string) error { conn.SetReadDeadline(time.Now().Add(10 * time.Second)); return nil })
 	for {
 		mt, message, err := conn.ReadMessage()
 		if err != nil {
 			panic(err)
 		}
 		switch mt {
-		case websocket.PingMessage:
-			if err := conn.WriteMessage(websocket.PongMessage, []byte("")); err != nil {
-				panic(err)
-			}
 		case websocket.TextMessage:
 			switch string(message) {
 			case "check":
