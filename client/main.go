@@ -15,7 +15,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const version = "20191008-4"
+const version = "20191008-5"
 
 var (
 	speedIn  float64
