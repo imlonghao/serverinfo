@@ -15,9 +15,9 @@
             <th>内核版本</th>
             <th>运行时间</th>
             <th>负载</th>
-            <th>内存 MB</th>
-            <th>SWAP MB</th>
-            <th>硬盘 GB</th>
+            <th>内存</th>
+            <th>SWAP</th>
+            <th>硬盘</th>
             <th colspan="2">网速 Mbps ↓|↑</th>
             <th>版本</th>
             <th>更新时间</th>
@@ -31,6 +31,14 @@
 <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdn.bootcss.com/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
 <script>
+    function readablizeBytes(bytes) {
+        if (bytes === 0) {
+            return 0
+        }
+        var s = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        var e = Math.floor(Math.log(bytes)/Math.log(1024));
+        return (bytes/Math.pow(1024, Math.floor(e))).toFixed(2)+" "+s[e];
+    }
     Date.prototype.format = function (fmt) {
         var o = {
             "M+": this.getMonth() + 1, //月份
@@ -84,9 +92,9 @@
             td[3].innerText = data.uptime.toFixed(2) + ' 秒';
         }
         td[4].innerText = data.load1 + ' / ' + data.load5 + ' / ' + data.load15;
-        td[5].innerText = `${(data.memory_used / 1024 / 1024).toFixed(0)} / ${(data.memory_total / 1024 / 1024).toFixed(0)} (${(data.memory_used / data.memory_total * 100).toFixed(2)}%)`;
-        td[6].innerText = `${(data.swap_used / 1024 / 1024).toFixed(0)} / ${(data.swap_total / 1024 / 1024).toFixed(0)} (${(data.swap_used / data.swap_total * 100).toFixed(2)}%)`;
-        td[7].innerText = `${(data.disk_used / 1024 / 1024 / 1024).toFixed(3)} / ${(data.disk_total / 1024 / 1024 / 1024).toFixed(3)} (${(data.disk_used / data.disk_total * 100).toFixed(2)}%)`;
+        td[5].innerText = `${readablizeBytes(data.memory_used)} / ${readablizeBytes(data.memory_total)} (${(data.memory_used / data.memory_total * 100).toFixed(2)}%)`;
+        td[6].innerText = `${readablizeBytes(data.swap_used)} / ${readablizeBytes(data.swap_total)} (${(data.swap_used / data.swap_total * 100).toFixed(2)}%)`;
+        td[7].innerText = `${readablizeBytes(data.disk_used)} / ${readablizeBytes(data.disk_total)} (${(data.disk_used / data.disk_total * 100).toFixed(2)}%)`;
         td[8].innerText = data.speed_in.toFixed(2);
         td[9].innerText = data.speed_out.toFixed(2);
         td[10].innerText = data.version;
