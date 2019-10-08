@@ -19,22 +19,24 @@ var (
 )
 
 type nodeMessage struct {
-	Hostname    string  `json:"hostname"`
-	Platform    string  `json:"platform"`
-	Kernel      string  `json:"kernel"`
-	Uptime      uint64  `json:"uptime"`
-	Load1       float64 `json:"load1"`
-	Load5       float64 `json:"load5"`
-	Load15      float64 `json:"load15"`
-	MemoryTotal uint64  `json:"memory_total"`
-	MemoryUsed  uint64  `json:"memory_used"`
-	SwapTotal   uint64  `json:"swap_total"`
-	SwapUsed    uint64  `json:"swap_used"`
-	DiskTotal   uint64  `json:"disk_total"`
-	DiskUsed    uint64  `json:"disk_used"`
-	BytesIn     uint64  `json:"bytes_in"`
-	BytesOut    uint64  `json:"bytes_out"`
-	Version     string  `json:"version"`
+	Hostname      string  `json:"hostname"`
+	Platform      string  `json:"platform"`
+	Kernel        string  `json:"kernel"`
+	Uptime        uint64  `json:"uptime"`
+	Load1         float64 `json:"load1"`
+	Load5         float64 `json:"load5"`
+	Load15        float64 `json:"load15"`
+	MemoryTotal   uint64  `json:"memory_total"`
+	MemoryUsed    uint64  `json:"memory_used"`
+	SwapTotal     uint64  `json:"swap_total"`
+	SwapUsed      uint64  `json:"swap_used"`
+	DiskTotal     uint64  `json:"disk_total"`
+	DiskUsed      uint64  `json:"disk_used"`
+	BytesInSpeed  uint64  `json:"bytes_in_speed"`
+	BytesOutSpeed uint64  `json:"bytes_out_speed"`
+	BytesIn       uint64  `json:"bytes_in"`
+	BytesOut      uint64  `json:"bytes_out"`
+	Version       string  `json:"version"`
 }
 
 func index(c *gin.Context) {

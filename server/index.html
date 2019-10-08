@@ -19,6 +19,7 @@
             <th>SWAP</th>
             <th>硬盘</th>
             <th colspan="2">网速 /s ↓|↑</th>
+            <th colspan="2">流量 ↓|↑</th>
             <th>版本</th>
             <th>更新时间</th>
         </tr>
@@ -74,7 +75,7 @@
         });
         if (!skip_create) {
             tr = document.querySelectorAll('tbody')[0].insertRow();
-            for (let i=0; i < 12; i++) {
+            for (let i=0; i < 14; i++) {
                 tr.insertCell();
             }
             td = tr.querySelectorAll("td");
@@ -92,13 +93,15 @@
             td[3].innerText = data.uptime.toFixed(2) + ' 秒';
         }
         td[4].innerText = data.load1 + ' / ' + data.load5 + ' / ' + data.load15;
-        td[5].innerText = `${readablizeBytes(data.memory_used)} / ${readablizeBytes(data.memory_total)} (${(data.memory_used / data.memory_total * 100).toFixed(2)}%)`;
-        td[6].innerText = `${readablizeBytes(data.swap_used)} / ${readablizeBytes(data.swap_total)} (${(data.swap_used / data.swap_total * 100).toFixed(2)}%)`;
-        td[7].innerText = `${readablizeBytes(data.disk_used)} / ${readablizeBytes(data.disk_total)} (${(data.disk_used / data.disk_total * 100).toFixed(2)}%)`;
-        td[8].innerText = readablizeBytes(data.bytes_in / 3);
-        td[9].innerText = readablizeBytes(data.bytes_out / 3);
-        td[10].innerText = data.version;
-        td[11].innerText = (new Date()).format("hh:mm:ss");
+        td[5].innerText = `${readablizeBytes(data.memory_used)} / ${readablizeBytes(data.memory_total)}`;
+        td[6].innerText = `${readablizeBytes(data.swap_used)} / ${readablizeBytes(data.swap_total)}`;
+        td[7].innerText = `${readablizeBytes(data.disk_used)} / ${readablizeBytes(data.disk_total)}`;
+        td[8].innerText = readablizeBytes(data.bytes_in_speed / 3);
+        td[9].innerText = readablizeBytes(data.bytes_out_speed / 3);
+        td[10].innerText = readablizeBytes(data.bytes_in);
+        td[11].innerText = readablizeBytes(data.bytes_out);
+        td[12].innerText = data.version;
+        td[13].innerText = (new Date()).format("hh:mm:ss");
     });
 </script>
 </body>

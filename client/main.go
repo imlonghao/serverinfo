@@ -15,34 +15,40 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const version = "20191008-7"
+const version = "20191009-1"
 
 var (
-	bytesIn  uint64
-	bytesOut uint64
+	bytesInSpeed  uint64
+	bytesOutSpeed uint64
+	bytesIn       uint64
+	bytesOut      uint64
 )
 
 type nodeMessage struct {
-	Hostname    string  `json:"hostname"`
-	Platform    string  `json:"platform"`
-	Kernel      string  `json:"kernel"`
-	Uptime      uint64  `json:"uptime"`
-	Load1       float64 `json:"load1"`
-	Load5       float64 `json:"load5"`
-	Load15      float64 `json:"load15"`
-	MemoryTotal uint64  `json:"memory_total"`
-	MemoryUsed  uint64  `json:"memory_used"`
-	SwapTotal   uint64  `json:"swap_total"`
-	SwapUsed    uint64  `json:"swap_used"`
-	DiskTotal   uint64  `json:"disk_total"`
-	DiskUsed    uint64  `json:"disk_used"`
-	BytesIn     uint64  `json:"bytes_in"`
-	BytesOut    uint64  `json:"bytes_out"`
-	Version     string  `json:"version"`
+	Hostname      string  `json:"hostname"`
+	Platform      string  `json:"platform"`
+	Kernel        string  `json:"kernel"`
+	Uptime        uint64  `json:"uptime"`
+	Load1         float64 `json:"load1"`
+	Load5         float64 `json:"load5"`
+	Load15        float64 `json:"load15"`
+	MemoryTotal   uint64  `json:"memory_total"`
+	MemoryUsed    uint64  `json:"memory_used"`
+	SwapTotal     uint64  `json:"swap_total"`
+	SwapUsed      uint64  `json:"swap_used"`
+	DiskTotal     uint64  `json:"disk_total"`
+	DiskUsed      uint64  `json:"disk_used"`
+	BytesInSpeed  uint64  `json:"bytes_in_speed"`
+	BytesOutSpeed uint64  `json:"bytes_out_speed"`
+	BytesIn       uint64  `json:"bytes_in"`
+	BytesOut      uint64  `json:"bytes_out"`
+	Version       string  `json:"version"`
 }
 
 func messageGenerator() nodeMessage {
 	var message nodeMessage
+	message.BytesInSpeed = bytesInSpeed
+	message.BytesOutSpeed = bytesOutSpeed
 	message.BytesIn = bytesIn
 	message.BytesOut = bytesOut
 	message.Version = version
@@ -115,14 +121,14 @@ func networkSpeed() (bytesIn uint64, bytesOut uint64) {
 
 func main() {
 	go func() {
-		bytesInOld, bytesOutOld := networkSpeed()
+		bytesIn, bytesOut = networkSpeed()
 		for {
 			time.Sleep(3 * time.Second)
 			bytesInNew, bytesOutNew := networkSpeed()
-			bytesIn = bytesInNew - bytesInOld
-			bytesOut = bytesOutNew - bytesOutOld
-			bytesInOld = bytesInNew
-			bytesOutOld = bytesOutNew
+			bytesInSpeed = bytesInNew - bytesIn
+			bytesOutSpeed = bytesOutNew - bytesOut
+			bytesIn = bytesInNew
+			bytesOut = bytesOutNew
 		}
 	}()
 	conn, _, err := websocket.DefaultDialer.Dial("wss://status.esd.cc/nws", nil)
