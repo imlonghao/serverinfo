@@ -50,7 +50,7 @@ func nodeWebsocket(c *gin.Context) {
 			if err := ws.WriteMessage(websocket.PingMessage, []byte("ping")); err != nil {
 				return
 			}
-			_, message, err := conn.ReadMessage()
+			_, message, err := ws.ReadMessage()
 			if err != nil {
 				return
 			}

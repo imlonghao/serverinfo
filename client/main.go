@@ -73,7 +73,7 @@ func main() {
 				panic(err)
 			}
 		case "ping":
-			if err := ws.WriteMessage(websocket.PingMessage, []byte("pong")); err != nil {
+			if err := conn.WriteMessage(websocket.PingMessage, []byte("pong")); err != nil {
 				panic(err)
 			}
 		}
