@@ -94,6 +94,9 @@ func networkSpeed() (bytesIn uint64, bytesOut uint64) {
 		}
 		splitLine := strings.Split(line, ":")
 		interfaceName := splitLine[0]
+		if strings.Contains(interfaceName, ".") {
+			continue
+		}
 		if strings.HasPrefix(interfaceName, "eth") || strings.HasPrefix(interfaceName, "enp") {
 			fields := strings.Fields(splitLine[1])
 			bi, err := strconv.ParseUint(fields[0], 10, 64)
